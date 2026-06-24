@@ -46,4 +46,88 @@ model Company {
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  customers    Customer[]
+  suppliers    Supplier[]
+  units        Unit[]
+  stockGroups  StockGroup[]
+  stockItems   StockItem[]
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String?
+  email     String?
+  address   String?
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Supplier {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String?
+  email     String?
+  address   String?
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Unit {
+  id        String   @id @default(cuid())
+  name      String
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  stockItems StockItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StockGroup {
+  id        String   @id @default(cuid())
+  name      String
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  stockItems StockItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StockItem {
+  id          String   @id @default(cuid())
+
+  name        String
+
+  quantity    Int      @default(0)
+
+  sellingPrice Float
+
+  purchasePrice Float
+
+  companyId   String
+  company     Company @relation(fields: [companyId], references: [id])
+
+  unitId      String
+  unit        Unit @relation(fields: [unitId], references: [id])
+
+  stockGroupId String
+  stockGroup  StockGroup @relation(fields: [stockGroupId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
