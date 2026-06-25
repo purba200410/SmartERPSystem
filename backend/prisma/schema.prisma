@@ -52,6 +52,7 @@ model Company {
   units        Unit[]
   stockGroups  StockGroup[]
   stockItems   StockItem[]
+  ledgers Ledger[]
 }
 
 model Customer {
@@ -130,4 +131,20 @@ model StockItem {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Ledger {
+  id              String   @id @default(cuid())
+
+  name            String
+
+  type            String
+
+  openingBalance  Float    @default(0)
+
+  companyId       String
+  company         Company @relation(fields: [companyId], references: [id])
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

@@ -9,6 +9,7 @@ import supplierRoutes from "./routes/supplier.routes.js";
 import unitRoutes from "./routes/unit.routes.js";
 import stockGroupRoutes from "./routes/stockGroup.routes.js";
 import stockItemRoutes from "./routes/stockItem.routes.js";
+import ledgerRoutes from "./routes/ledger.routes.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use("/api/supplier", supplierRoutes);
 app.use("/api/unit", unitRoutes);
 app.use("/api/stock-group", stockGroupRoutes);
 app.use("/api/stock-item", stockItemRoutes);
+app.use("/api/ledger", ledgerRoutes);
 
 app.get("/", (req, res) => {
   res.json({

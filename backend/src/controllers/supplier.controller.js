@@ -14,10 +14,20 @@ export const createSupplier = async (req, res) => {
       },
     });
 
+     await prisma.ledger.create({
+      data: {
+      name: supplier.name,
+      type: "SUPPLIER",
+      openingBalance: 0,
+      companyId: supplier.companyId,
+    },
+    });
+
     res.status(201).json({
       success: true,
       supplier,
     });
+   
   } catch (error) {
     console.error(error);
     res.status(500).json({

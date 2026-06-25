@@ -14,10 +14,20 @@ export const createCustomer = async (req, res) => {
       },
     });
 
+    await prisma.ledger.create({
+        data: {
+        name: customer.name,
+        type: "CUSTOMER",
+        openingBalance: 0,
+        companyId: customer.companyId,
+      },
+    });
+
     res.status(201).json({
       success: true,
       customer,
     });
+    
   } catch (error) {
     console.error(error);
     res.status(500).json({
