@@ -10,6 +10,10 @@ import unitRoutes from "./routes/unit.routes.js";
 import stockGroupRoutes from "./routes/stockGroup.routes.js";
 import stockItemRoutes from "./routes/stockItem.routes.js";
 import ledgerRoutes from "./routes/ledger.routes.js";
+import purchaseVoucherRoutes from "./routes/purchaseVoucher.routes.js";
+import salesVoucherRoutes from "./routes/salesVoucher.routes.js";
+import groupRoutes from "./routes/group.routes.js";
+import billingRoutes from "./routes/billing.routes.js";
 
 dotenv.config();
 
@@ -25,6 +29,10 @@ app.use("/api/unit", unitRoutes);
 app.use("/api/stock-group", stockGroupRoutes);
 app.use("/api/stock-item", stockItemRoutes);
 app.use("/api/ledger", ledgerRoutes);
+app.use("/api/purchase-voucher", purchaseVoucherRoutes);
+app.use("/api/sales-voucher", salesVoucherRoutes);
+app.use("/api/group", groupRoutes);
+app.use("/api/billing", billingRoutes);
 
 app.get("/", (req, res) => {
   res.json({

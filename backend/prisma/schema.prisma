@@ -7,144 +7,208 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  ADMIN
-  STAFF
-  CUSTOMER
-}
-
 model User {
   id             String    @id @default(cuid())
   name           String
   email          String    @unique
   password       String
   role           UserRole  @default(ADMIN)
-
   companyId      String?
-  company        Company?  @relation("CompanyStaff", fields: [companyId], references: [id])
-
-  ownedCompanies Company[] @relation("CompanyOwner")
-
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  ownedCompanies Company[] @relation("CompanyOwner")
+  company        Company?  @relation("CompanyStaff", fields: [companyId], references: [id])
 }
 
 model Company {
-  id              String   @id @default(cuid())
-
-  name            String
-  gstNumber       String?
-  phone           String?
-  email           String?
-  address         String?
-  financialYear   String?
-
-  ownerId         String
-  owner           User     @relation("CompanyOwner", fields: [ownerId], references: [id])
-
-  staff           User[]   @relation("CompanyStaff")
-
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  customers    Customer[]
-  suppliers    Supplier[]
-  units        Unit[]
-  stockGroups  StockGroup[]
-  stockItems   StockItem[]
-  ledgers Ledger[]
+  id               String            @id @default(cuid())
+  name             String
+  gstNumber        String?
+  phone            String?
+  email            String?
+  address          String?
+  financialYear    String?
+  ownerId          String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  owner            User              @relation("CompanyOwner", fields: [ownerId], references: [id])
+  customers        Customer[]
+  ledgers          Ledger[]
+  stockGroups      StockGroup[]
+  stockItems       StockItem[]
+  suppliers        Supplier[]
+  units            Unit[]
+  staff            User[]            @relation("CompanyStaff")
+  purchaseVouchers PurchaseVoucher[]
+  salesVouchers    SalesVoucher[]
+  groups           Group[]
 }
 
 model Customer {
-  id        String   @id @default(cuid())
-  name      String
-  phone     String?
-  email     String?
-  address   String?
-
-  companyId String
-  company   Company @relation(fields: [companyId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String         @id @default(cuid())
+  name          String
+  phone         String?
+  email         String?
+  address       String?
+  companyId     String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  company       Company        @relation(fields: [companyId], references: [id])
+  salesVouchers SalesVoucher[]
 }
 
 model Supplier {
-  id        String   @id @default(cuid())
-  name      String
-  phone     String?
-  email     String?
-  address   String?
-
-  companyId String
-  company   Company @relation(fields: [companyId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               String            @id @default(cuid())
+  name             String
+  phone            String?
+  email            String?
+  address          String?
+  companyId        String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  company          Company           @relation(fields: [companyId], references: [id])
+  purchaseVouchers PurchaseVoucher[]
 }
 
 model Unit {
-  id        String   @id @default(cuid())
-  name      String
-
-  companyId String
-  company   Company @relation(fields: [companyId], references: [id])
-
+  id         String      @id @default(cuid())
+  name       String
+  companyId  String
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
   stockItems StockItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  company    Company     @relation(fields: [companyId], references: [id])
 }
 
 model StockGroup {
-  id        String   @id @default(cuid())
-  name      String
+  id         String      @id @default(cuid())
+  name       String
+  companyId  String
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  company    Company     @relation(fields: [companyId], references: [id])
+  stockItems StockItem[]
+}
+
+model StockItem {
+  id                   String                @id @default(cuid())
+  name                 String
+  quantity             Int                   @default(0)
+  sellingPrice         Float
+  purchasePrice        Float
+  companyId            String
+  unitId               String
+  stockGroupId         String
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  company              Company               @relation(fields: [companyId], references: [id])
+  stockGroup           StockGroup            @relation(fields: [stockGroupId], references: [id])
+  unit                 Unit                  @relation(fields: [unitId], references: [id])
+  purchaseVoucherItems PurchaseVoucherItem[]
+  salesVoucherItems    SalesVoucherItem[]
+}
+
+model Ledger {
+  id             String @id @default(cuid())
+  name           String
+  type           String
+  openingBalance Float  @default(0)
 
   companyId String
   company   Company @relation(fields: [companyId], references: [id])
 
-  stockItems StockItem[]
+  groupId String?
+  group   Group?  @relation(fields: [groupId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model StockItem {
-  id          String   @id @default(cuid())
-
-  name        String
-
-  quantity    Int      @default(0)
-
-  sellingPrice Float
-
-  purchasePrice Float
-
-  companyId   String
-  company     Company @relation(fields: [companyId], references: [id])
-
-  unitId      String
-  unit        Unit @relation(fields: [unitId], references: [id])
-
-  stockGroupId String
-  stockGroup  StockGroup @relation(fields: [stockGroupId], references: [id])
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+enum UserRole {
+  ADMIN
+  STAFF
+  CUSTOMER
 }
 
-model Ledger {
-  id              String   @id @default(cuid())
+model PurchaseVoucher {
+  id            String @id @default(cuid())
+  voucherNumber String @unique
 
-  name            String
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
 
-  type            String
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
 
-  openingBalance  Float    @default(0)
+  totalAmount Float
 
-  companyId       String
-  company         Company @relation(fields: [companyId], references: [id])
+  createdAt DateTime @default(now())
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  items       PurchaseVoucherItem[]
+  voucherDate DateTime              @default(now())
+}
+
+model PurchaseVoucherItem {
+  id String @id @default(cuid())
+
+  purchaseVoucherId String
+  purchaseVoucher   PurchaseVoucher @relation(fields: [purchaseVoucherId], references: [id])
+
+  stockItemId String
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id])
+
+  quantity Int
+  rate     Float
+  amount   Float
+}
+
+model CommandShortcut {
+  id          String @id @default(cuid())
+  key         String @unique
+  description String
+  screen      String
+}
+
+model Group {
+  id        String   @id @default(cuid())
+  name      String
+  companyId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  ledgers Ledger[]
+}
+
+model SalesVoucher {
+  id            String @id @default(cuid())
+  voucherNumber String @unique
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  totalAmount Float
+
+  createdAt DateTime @default(now())
+
+  items       SalesVoucherItem[]
+  voucherDate DateTime           @default(now())
+}
+
+model SalesVoucherItem {
+  id String @id @default(cuid())
+
+  salesVoucherId String
+  salesVoucher   SalesVoucher @relation(fields: [salesVoucherId], references: [id])
+
+  stockItemId String
+  stockItem   StockItem @relation(fields: [stockItemId], references: [id])
+
+  quantity Int
+  rate     Float
+  amount   Float
 }
