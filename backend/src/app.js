@@ -15,6 +15,9 @@ import salesVoucherRoutes from "./routes/salesVoucher.routes.js";
 import groupRoutes from "./routes/group.routes.js";
 import billingRoutes from "./routes/billing.routes.js";
 
+
+
+
 dotenv.config();
 
 const app = express();
@@ -33,6 +36,7 @@ app.use("/api/purchase-voucher", purchaseVoucherRoutes);
 app.use("/api/sales-voucher", salesVoucherRoutes);
 app.use("/api/group", groupRoutes);
 app.use("/api/billing", billingRoutes);
+
 
 app.get("/", (req, res) => {
   res.json({
